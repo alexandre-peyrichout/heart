@@ -1,8 +1,10 @@
-import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import React from "react";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { RootStackParamList } from "../navigation/Stack";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;

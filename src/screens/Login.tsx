@@ -78,6 +78,17 @@ export default function LoginScreen({ navigation }: Props) {
               <Text className="text-sky-600">Sign Up</Text>
             </TouchableOpacity>
           </Animated.View>
+          <Animated.View
+            entering={FadeInDown.delay(600).duration(1000).springify()}
+            className="flex-row justify-center"
+          >
+            <Text>Forgot your password? </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ResetPassword")}
+            >
+              <Text className="text-sky-600">Reset</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
     </View>

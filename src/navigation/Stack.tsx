@@ -1,25 +1,38 @@
-import * as React from "react";
+import React from "react";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import LoginScreen from "../screens/LoginScreen";
-import SignupScreen from "../screens/SignupScreen";
+import { useAuth } from "../context/Auth";
+import Login from "../screens/Login";
+import ResetPassword from "../screens/ResetPassword";
+import Signup from "../screens/Signup";
 
 export type RootStackParamList = {
   Login: undefined;
-  SignUp: { userId: string };
+  SignUp: undefined;
+  Home: undefined;
+  ResetPassword: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function StackNavigator() {
+  const { loggedInUser } = useAuth();
+
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName={loggedInUser ? "Login" : "Login"}
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="SignUp" component={SignupScreen} />
+      {/* {loggedInUser ? (
+        <Stack.Screen name="Home" component={Home} />
+      ) : ( */}
+      <>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="SignUp" component={Signup} />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} />
+      </>
+      {/* )} */}
     </Stack.Navigator>
   );
 }

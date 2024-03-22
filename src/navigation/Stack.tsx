@@ -3,12 +3,13 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { useAuth } from "../context/Auth";
-import Login from "../screens/Login";
+import Home from "../screens/Home";
 import ResetPassword from "../screens/ResetPassword";
-import Signup from "../screens/Signup";
+import SignIn from "../screens/SignIn";
+import SignUp from "../screens/SignUp";
 
 export type RootStackParamList = {
-  Login: undefined;
+  SignIn: undefined;
   SignUp: undefined;
   Home: undefined;
   ResetPassword: undefined;
@@ -21,18 +22,18 @@ export default function StackNavigator() {
 
   return (
     <Stack.Navigator
-      initialRouteName={loggedInUser ? "Login" : "Login"}
+      initialRouteName={loggedInUser ? "Home" : "SignIn"}
       screenOptions={{ headerShown: false }}
     >
-      {/* {loggedInUser ? (
+      {loggedInUser ? (
         <Stack.Screen name="Home" component={Home} />
-      ) : ( */}
-      <>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={Signup} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} />
-      </>
-      {/* )} */}
+      ) : (
+        <>
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

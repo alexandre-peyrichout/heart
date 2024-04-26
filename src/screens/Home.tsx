@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { collection, getDocs } from "firebase/firestore";
 
+import { RootStackParamList } from "../navigation/Stack";
 import { auth, db } from "../services/firebase";
 
-export default function Home() {
+type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+
+export default function Home({ navigation }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [children, setChildren] = useState([]);
 
@@ -38,7 +42,7 @@ export default function Home() {
         {children.map((child, index) => (
           <TouchableOpacity
             key={index}
-            onPress={() => null}
+            onPress={() => navigation.navigate("Sentence")}
             className="bg-gray-200 p-4 rounded-2xl my-2"
           >
             <Image

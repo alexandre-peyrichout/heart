@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 
-import { doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 import { auth, db } from "../services/firebase";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [article, setArticle] = useState<string>("");
+  const [children, setChildren] = useState([]);
 
   const handleLogOut = async () => {
     try {
@@ -21,23 +21,42 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetchArticle = async () => {
+    const fetchChildren = async () => {
       try {
-        const docRef = doc(db, "articles", "c2m3HjXLd6YpXgoymj2d");
-        const article = await getDoc(docRef);
-        setArticle(article.data().content[0].value);
+        const children = await getDocs(collection(db, "children"));
+        setChildren(children.docs.map((doc) => doc.data()));
       } catch (error) {
         Alert.alert("Error", error.message);
       }
     };
-
-    fetchArticle();
+    fetchChildren();
   }, []);
 
   return (
     <View className="bg-white w-full h-full flex justify-around">
-      <View className="flex flex-col items-center justify-center">
-        <Text className="text-black text-lg mt-4">{article}</Text>
+      <View className="flex justify-center mx-4">
+        {children.map((child, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => null}
+            className="bg-gray-200 p-4 rounded-2xl my-2"
+          >
+            <Image
+              source={{ uri: child.picture_url }}
+              className="w-32 h-32 mx-auto"
+            />
+            <Text className="text-black text-lg mt-2 text-center">
+              {child.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity
+          key="add"
+          onPress={() => null}
+          className="bg-sky-400 w-full p-3 rounded-2xl"
+        >
+          <Text className="text-white font-bold text-xl text-center">Add</Text>
+        </TouchableOpacity>
       </View>
       <View className="mx-4">
         <Text className="text-black text-lg mt-4 text-center">

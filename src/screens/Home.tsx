@@ -4,14 +4,16 @@ import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { collection, getDocs } from "firebase/firestore";
 
+import { useAuth } from "../context/Auth";
 import { RootStackParamList } from "../navigation/Stack";
-import { auth, db } from "../services/firebase";
+import { auth } from "../services/firebase";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function Home({ navigation }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [children, setChildren] = useState([]);
+  const { loggedInUser } = useAuth();
 
   const handleLogOut = async () => {
     try {
@@ -27,14 +29,16 @@ export default function Home({ navigation }: Props) {
   useEffect(() => {
     const fetchChildren = async () => {
       try {
-        const children = await getDocs(collection(db, "children"));
+        const children = await getDocs(
+          collection(loggedInUser.doc, `/children`)
+        );
         setChildren(children.docs.map((doc) => doc.data()));
       } catch (error) {
         Alert.alert("Error", error.message);
       }
     };
     fetchChildren();
-  }, []);
+  }, [auth.currentUser.uid]);
 
   return (
     <View className="bg-white w-full h-full flex justify-around">
@@ -46,7 +50,7 @@ export default function Home({ navigation }: Props) {
             className="bg-gray-200 p-4 rounded-2xl my-2"
           >
             <Image
-              source={{ uri: child.picture_url }}
+              source={{ uri: child.picture }}
               className="w-32 h-32 mx-auto"
             />
             <Text className="text-black text-lg mt-2 text-center">

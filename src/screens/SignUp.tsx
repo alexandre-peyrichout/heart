@@ -3,10 +3,11 @@ import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { RootStackParamList } from "../navigation/Stack";
-import { auth } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 
 type Props = NativeStackScreenProps<RootStackParamList, "SignUp">;
 
@@ -22,6 +23,10 @@ export default function SignUp({ navigation }: Props) {
     try {
       setIsLoading(true);
       await createUserWithEmailAndPassword(auth, email, password);
+      // Add entry in "users" collection
+      await addDoc(collection(db, "users"), {
+        account_id: auth.currentUser.uid,
+      });
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {

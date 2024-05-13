@@ -3,6 +3,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { useAuth } from "../context/Auth";
+import AddChild from "../screens/AddChild";
 import Home from "../screens/Home";
 import ResetPassword from "../screens/ResetPassword";
 import Sentence from "../screens/Sentence";
@@ -15,6 +16,7 @@ export type RootStackParamList = {
   ResetPassword: undefined;
   Home: undefined;
   Sentence: undefined;
+  AddChild: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,6 +30,7 @@ export default function StackNavigator() {
         <>
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Sentence" component={Sentence} />
+          <Stack.Screen name="AddChild" component={AddChild} />
         </>
       ) : (
         <>

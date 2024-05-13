@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 
 import { useAuth } from "../context/Auth";
 import { RootStackParamList } from "../navigation/Stack";
@@ -32,13 +32,36 @@ export default function Home({ navigation }: Props) {
         const children = await getDocs(
           collection(loggedInUser.doc, `/children`)
         );
-        setChildren(children.docs.map((doc) => doc.data()));
+        setChildren(
+          children.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
       } catch (error) {
         Alert.alert("Error", error.message);
       }
     };
     fetchChildren();
   }, [auth.currentUser.uid]);
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [selectedChildId, setSelectedChildId] = useState("");
+
+  const handleDeleteConfirmation = (id: string) => {
+    setSelectedChildId(id);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeleteChild = async () => {
+    try {
+      setIsLoading(true);
+      await deleteDoc(doc(loggedInUser.doc, `/children/${selectedChildId}`));
+      setChildren(children.filter((child) => child.id !== selectedChildId));
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsLoading(false);
+      setShowDeleteConfirmation(false);
+    }
+  };
 
   return (
     <View className="bg-white w-full h-full flex justify-around">
@@ -56,11 +79,19 @@ export default function Home({ navigation }: Props) {
             <Text className="text-black text-lg mt-2 text-center">
               {child.name}
             </Text>
+            <TouchableOpacity
+              onPress={() => handleDeleteConfirmation(child.id)}
+              className="absolute top-2 right-2"
+            >
+              <Text className="text-black text-lg mt-2 text-center">
+                Delete
+              </Text>
+            </TouchableOpacity>
           </TouchableOpacity>
         ))}
         <TouchableOpacity
           key="add"
-          onPress={() => null}
+          onPress={() => navigation.navigate("AddChild")}
           className="bg-sky-400 w-full p-3 rounded-2xl"
         >
           <Text className="text-white font-bold text-xl text-center">Add</Text>
@@ -80,6 +111,29 @@ export default function Home({ navigation }: Props) {
           </Text>
         </TouchableOpacity>
       </View>
+      {showDeleteConfirmation && (
+        <View className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+          <View className="bg-white p-4 rounded-lg">
+            <Text className="text-black text-lg mb-2">
+              Are you sure you want to delete this child?
+            </Text>
+            <View className="flex justify-center">
+              <TouchableOpacity
+                onPress={handleDeleteChild}
+                className="bg-red-500 p-2 rounded-lg mx-2"
+              >
+                <Text className="text-white">Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setShowDeleteConfirmation(false)}
+                className="bg-gray-500 p-2 rounded-lg mx-2"
+              >
+                <Text className="text-white">Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 }

@@ -58,7 +58,7 @@ export default function Login({ navigation }: Props) {
           className="w-full"
         >
           <TouchableOpacity
-            className="bg-sky-400 w-full p-3 mb-3 rounded-2xl"
+            className="bg-black w-full p-3 mb-3 rounded-2xl"
             onPress={handleSignIn}
           >
             <Text className="text-white font-bold text-xl text-center">

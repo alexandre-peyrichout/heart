@@ -81,7 +81,7 @@ export default function SignUp({ navigation }: Props) {
           className="w-full"
         >
           <TouchableOpacity
-            className="bg-sky-400 w-full p-3 mb-3 rounded-2xl"
+            className="bg-black w-full p-3 mb-3 rounded-2xl"
             onPress={handleSignUp}
             disabled={isLoading}
           >

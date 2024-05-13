@@ -83,16 +83,14 @@ export default function Home({ navigation }: Props) {
               onPress={() => handleDeleteConfirmation(child.id)}
               className="absolute top-2 right-2"
             >
-              <Text className="text-black text-lg mt-2 text-center">
-                Delete
-              </Text>
+              <Text className="text-black text-lg mt-2 text-center">X</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         ))}
         <TouchableOpacity
           key="add"
           onPress={() => navigation.navigate("AddChild")}
-          className="bg-sky-400 w-full p-3 rounded-2xl"
+          className="bg-black w-full p-3 rounded-2xl"
         >
           <Text className="text-white font-bold text-xl text-center">Add</Text>
         </TouchableOpacity>
@@ -102,7 +100,7 @@ export default function Home({ navigation }: Props) {
           Logged in as: {auth.currentUser.email}
         </Text>
         <TouchableOpacity
-          className="bg-sky-400 w-full p-3 rounded-2xl"
+          className="bg-black w-full p-3 rounded-2xl"
           onPress={handleLogOut}
           disabled={isLoading}
         >

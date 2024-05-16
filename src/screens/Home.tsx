@@ -99,9 +99,6 @@ export default function Home({ navigation }: Props) {
         </TouchableOpacity>
       </View>
       <View className="mx-4">
-        <Text className="text-black text-lg mt-4 text-center">
-          connecté avec: {auth.currentUser.email}
-        </Text>
         <TouchableOpacity
           className="bg-black w-full p-3 rounded-2xl"
           onPress={handleLogOut}

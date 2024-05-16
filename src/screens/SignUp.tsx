@@ -13,6 +13,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "SignUp">;
 
 export default function SignUp({ navigation }: Props) {
   const [email, setEmail] = useState<string>("");
+  const [gender, setGender] = useState<string>("male");
+  const [firstname, setFirstname] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,6 +28,8 @@ export default function SignUp({ navigation }: Props) {
       // Add entry in "users" collection
       await addDoc(collection(db, "users"), {
         account_id: auth.currentUser.uid,
+        gender: gender,
+        firstname: firstname,
       });
     } catch (error) {
       Alert.alert("Error", error.message);
@@ -39,6 +43,50 @@ export default function SignUp({ navigation }: Props) {
       <View className="mx-4 space-y-4">
         <Animated.View
           entering={FadeInDown.delay(200).duration(1000).springify()}
+        >
+          <Text className="text-gray-500 font-bold ml-2 mb-2">Je suis:</Text>
+          <View className="flex-row bg-black/5 p-5 rounded-2xl w-full">
+            <TouchableOpacity
+              className="flex-row items-center mr-4"
+              onPress={() => setGender("male")}
+            >
+              <View
+                className={`w-4 h-4 rounded-full border-2 ${
+                  gender === "male"
+                    ? "bg-blue-500 border-blue-500"
+                    : "border-gray-400"
+                }`}
+              />
+              <Text className="text-gray-500 ml-2">Un papa</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-row items-center"
+              onPress={() => setGender("female")}
+            >
+              <View
+                className={`w-4 h-4 rounded-full border-2 ${
+                  gender === "female"
+                    ? "bg-pink-500 border-pink-500"
+                    : "border-gray-400"
+                }`}
+              />
+              <Text className="text-gray-500 ml-2">Une maman</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+        <Animated.View
+          entering={FadeInDown.delay(200).duration(1000).springify()}
+          className="bg-black/5 p-5 rounded-2xl w-full"
+        >
+          <TextInput
+            placeholder="Prénom"
+            placeholderTextColor={"gray"}
+            value={firstname}
+            onChangeText={setFirstname}
+          />
+        </Animated.View>
+        <Animated.View
+          entering={FadeInDown.delay(200).duration(1000).springify()}
           className="bg-black/5 p-5 rounded-2xl w-full"
         >
           <TextInput
@@ -50,6 +98,7 @@ export default function SignUp({ navigation }: Props) {
             inputMode="email"
           />
         </Animated.View>
+
         <Animated.View
           entering={FadeInDown.delay(400).duration(1000).springify()}
           className="bg-black/5 p-5 rounded-2xl w-full"
@@ -83,7 +132,7 @@ export default function SignUp({ navigation }: Props) {
           <TouchableOpacity
             className="bg-black w-full p-3 mb-3 rounded-2xl"
             onPress={handleSignUp}
-            disabled={isLoading}
+            disabled={isLoading || !email || !password || !confirmPassword}
           >
             <Text className="text-white font-bold text-xl text-center">
               M'inscrire

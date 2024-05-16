@@ -26,6 +26,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "AddChild">;
 
 export default function AddChild({ navigation }: Props) {
   const [name, setName] = useState("");
+  const [gender, setGender] = useState<string>("male");
   const [birthDate, setBirthDate] = useState(new Date());
   const [image, setImage] = useState(null);
   const { loggedInUser } = useAuth();
@@ -102,6 +103,41 @@ export default function AddChild({ navigation }: Props) {
         </Animated.View>
         <Animated.View
           entering={FadeInDown.delay(200).duration(1000).springify()}
+        >
+          <Text className="text-gray-500 font-bold ml-2 mb-2">
+            Sexe de naissance:
+          </Text>
+          <View className="flex-row bg-black/5 p-5 rounded-2xl w-full">
+            <TouchableOpacity
+              className="flex-row items-center mr-4"
+              onPress={() => setGender("male")}
+            >
+              <View
+                className={`w-4 h-4 rounded-full border-2 ${
+                  gender === "male"
+                    ? "bg-blue-500 border-blue-500"
+                    : "border-gray-400"
+                }`}
+              />
+              <Text className="text-gray-500 ml-2">Garçon</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-row items-center"
+              onPress={() => setGender("female")}
+            >
+              <View
+                className={`w-4 h-4 rounded-full border-2 ${
+                  gender === "female"
+                    ? "bg-pink-500 border-pink-500"
+                    : "border-gray-400"
+                }`}
+              />
+              <Text className="text-gray-500 ml-2">Fille</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+        <Animated.View
+          entering={FadeInDown.delay(200).duration(1000).springify()}
           className=" p-5 rounded-2xl w-full flex-row justify-between items-center"
         >
           <Text>Date de naissance: </Text>
@@ -127,7 +163,7 @@ export default function AddChild({ navigation }: Props) {
         )}
 
         <TouchableOpacity
-          disabled={!name || !birthDate || !image}
+          disabled={!name || !birthDate || !image || !gender}
           onPress={handleSubmit}
           className="bg-black w-full p-3 mb-3 rounded-2xl"
         >

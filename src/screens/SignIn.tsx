@@ -19,7 +19,7 @@ export default function Login({ navigation }: Props) {
       setIsLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      Alert.alert("Error", error.message);
+      Alert.alert("Erreur", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -32,7 +32,7 @@ export default function Login({ navigation }: Props) {
           className="bg-black/5 p-5 rounded-2xl w-full"
         >
           <TextInput
-            placeholder="Email"
+            placeholder="Émail"
             placeholderTextColor={"gray"}
             value={email}
             onChangeText={setEmail}
@@ -45,7 +45,7 @@ export default function Login({ navigation }: Props) {
           className="bg-black/5 p-5 rounded-2xl w-full mb-3"
         >
           <TextInput
-            placeholder="Password"
+            placeholder="Mot de passe"
             placeholderTextColor={"gray"}
             secureTextEntry
             value={password}
@@ -62,7 +62,7 @@ export default function Login({ navigation }: Props) {
             onPress={handleSignIn}
           >
             <Text className="text-white font-bold text-xl text-center">
-              Sign In
+              Se connecter
             </Text>
           </TouchableOpacity>
         </Animated.View>
@@ -70,23 +70,23 @@ export default function Login({ navigation }: Props) {
           entering={FadeInDown.delay(800).duration(1000).springify()}
           className="flex-row justify-center"
         >
-          <Text>Don't have an account? </Text>
+          <Text>Vous n'avez pas de compte? </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate("SignUp")}
             disabled={isLoading}
           >
-            <Text className="text-sky-600">Sign Up</Text>
+            <Text className="text-sky-600">Créer un compte</Text>
           </TouchableOpacity>
         </Animated.View>
         <Animated.View
           entering={FadeInDown.delay(1000).duration(1000).springify()}
           className="flex-row justify-center"
         >
-          <Text>Forgot your password? </Text>
+          <Text>Vous avez oublié votre mot de passe? </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate("ResetPassword")}
           >
-            <Text className="text-sky-600">Reset</Text>
+            <Text className="text-sky-600">Réinitialiser</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

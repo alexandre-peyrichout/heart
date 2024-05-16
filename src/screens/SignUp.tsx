@@ -42,7 +42,7 @@ export default function SignUp({ navigation }: Props) {
           className="bg-black/5 p-5 rounded-2xl w-full"
         >
           <TextInput
-            placeholder="Email"
+            placeholder="Émail"
             placeholderTextColor={"gray"}
             value={email}
             onChangeText={setEmail}
@@ -55,7 +55,7 @@ export default function SignUp({ navigation }: Props) {
           className="bg-black/5 p-5 rounded-2xl w-full"
         >
           <TextInput
-            placeholder="Password"
+            placeholder="Mot de passe"
             placeholderTextColor={"gray"}
             secureTextEntry
             value={password}
@@ -68,7 +68,7 @@ export default function SignUp({ navigation }: Props) {
           className="bg-black/5 p-5 rounded-2xl w-full mb-3"
         >
           <TextInput
-            placeholder="Confirm Password"
+            placeholder="Confirmer le mot de passe"
             placeholderTextColor={"gray"}
             secureTextEntry
             value={confirmPassword}
@@ -86,7 +86,7 @@ export default function SignUp({ navigation }: Props) {
             disabled={isLoading}
           >
             <Text className="text-white font-bold text-xl text-center">
-              Sign Up
+              M'inscrire
             </Text>
           </TouchableOpacity>
         </Animated.View>
@@ -94,9 +94,9 @@ export default function SignUp({ navigation }: Props) {
           entering={FadeInDown.delay(800).duration(1000).springify()}
           className="flex-row justify-center"
         >
-          <Text>Already have an account? </Text>
+          <Text>Vous avez déjà un compte? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-            <Text className="text-sky-600">Sign In</Text>
+            <Text className="text-sky-600">Se connecter</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

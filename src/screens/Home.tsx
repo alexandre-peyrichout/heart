@@ -20,7 +20,7 @@ export default function Home({ navigation }: Props) {
       setIsLoading(true);
       await auth.signOut();
     } catch (error) {
-      Alert.alert("Error", error.message);
+      Alert.alert("Erreur", error.message);
     } finally {
       setIsLoading(false);
     }

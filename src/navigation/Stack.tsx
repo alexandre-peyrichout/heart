@@ -28,15 +28,39 @@ export default function StackNavigator() {
     <Stack.Navigator initialRouteName={loggedInUser ? "Home" : "SignIn"}>
       {loggedInUser ? (
         <>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Sentence" component={Sentence} />
-          <Stack.Screen name="AddChild" component={AddChild} />
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{ title: "Mes enfants" }}
+          />
+          <Stack.Screen
+            name="Sentence"
+            component={Sentence}
+            options={{ title: "Ma phrase" }}
+          />
+          <Stack.Screen
+            name="AddChild"
+            component={AddChild}
+            options={{ title: "Ajouter mon enfant" }}
+          />
         </>
       ) : (
         <>
-          <Stack.Screen name="SignIn" component={SignIn} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="ResetPassword" component={ResetPassword} />
+          <Stack.Screen
+            name="SignIn"
+            component={SignIn}
+            options={{ title: "Se connecter" }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{ title: "Créer un compte" }}
+          />
+          <Stack.Screen
+            name="ResetPassword"
+            component={ResetPassword}
+            options={{ title: "Récupération" }}
+          />
         </>
       )}
     </Stack.Navigator>

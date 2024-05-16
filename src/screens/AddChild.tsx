@@ -94,7 +94,7 @@ export default function AddChild({ navigation }: Props) {
           className="bg-black/5 p-5 rounded-2xl w-full"
         >
           <TextInput
-            placeholder="Name"
+            placeholder="Prénom"
             placeholderTextColor={"gray"}
             value={name}
             onChangeText={handleNameChange}
@@ -104,8 +104,9 @@ export default function AddChild({ navigation }: Props) {
           entering={FadeInDown.delay(200).duration(1000).springify()}
           className=" p-5 rounded-2xl w-full flex-row justify-between items-center"
         >
-          <Text>Birth Date: </Text>
+          <Text>Date de naissance: </Text>
           <DateTimePicker
+            locale="fr-FR"
             mode="date"
             value={birthDate}
             onChange={handleBirthDateChange}
@@ -119,7 +120,9 @@ export default function AddChild({ navigation }: Props) {
             className="w-40 h-40 mx-auto bg-gray-400 justify-center"
             onPress={pickImage}
           >
-            <Text className="text-white text-center">Upload image</Text>
+            <Text className="text-white text-center">
+              Télécharger une image
+            </Text>
           </TouchableOpacity>
         )}
 
@@ -129,7 +132,7 @@ export default function AddChild({ navigation }: Props) {
           className="bg-black w-full p-3 mb-3 rounded-2xl"
         >
           <Text className="text-white font-bold text-xl text-center">
-            Add child
+            Ajouter mon enfant
           </Text>
         </TouchableOpacity>
       </View>

@@ -18,12 +18,16 @@ export default function ResetPassword({ navigation }: Props) {
     try {
       setIsLoading(true);
       await sendPasswordResetEmail(auth, email);
-      Alert.alert("Mail sent", "Check your inbox for the recovery email.", [
-        {
-          text: "OK",
-          onPress: () => navigation.navigate("SignIn"),
-        },
-      ]);
+      Alert.alert(
+        "Mail envoyé",
+        "Vérifiez votre boîte de réception pour réinitialiser votre mot de passe.",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("SignIn"),
+          },
+        ]
+      );
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
@@ -39,7 +43,7 @@ export default function ResetPassword({ navigation }: Props) {
           className="bg-black/5 p-5 rounded-2xl w-full"
         >
           <TextInput
-            placeholder="Email"
+            placeholder="Émail"
             placeholderTextColor={"gray"}
             value={email}
             onChangeText={setEmail}
@@ -58,7 +62,7 @@ export default function ResetPassword({ navigation }: Props) {
             disabled={isLoading}
           >
             <Text className="text-white font-bold text-xl text-center">
-              Send recovery email
+              Réinitialiser mon mot de passe
             </Text>
           </TouchableOpacity>
         </Animated.View>
@@ -66,9 +70,9 @@ export default function ResetPassword({ navigation }: Props) {
           entering={FadeInDown.delay(600).duration(1000).springify()}
           className="flex-row justify-center"
         >
-          <Text>Forget about it, I remember now! </Text>
+          <Text>Finalement, je m'en souviens! </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-            <Text className="text-sky-600">Login</Text>
+            <Text className="text-sky-600">Se connecter</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

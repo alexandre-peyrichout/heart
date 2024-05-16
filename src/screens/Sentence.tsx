@@ -15,7 +15,7 @@ export default function Sentence() {
         const sentences = await getDocs(q);
         setSentence(sentences.docs[0].data()["content_m_m"]);
       } catch (error) {
-        Alert.alert("Error", error.message);
+        Alert.alert("Erreur", error.message);
       }
     };
     fetchSentence();

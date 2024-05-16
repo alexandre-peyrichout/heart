@@ -68,6 +68,8 @@ export default function AddChild({ navigation }: Props) {
   };
 
   const handleSubmit = async () => {
+    if (!name || !birthDate)
+      Alert.alert("Erreur", "Veuillez remplir tous les champs.");
     // Upload the image to Firebase Storage
     const uploadedImageUrl = await uploadImage();
 
@@ -163,7 +165,6 @@ export default function AddChild({ navigation }: Props) {
         )}
 
         <TouchableOpacity
-          disabled={!name || !birthDate || !image || !gender}
           onPress={handleSubmit}
           className="bg-black w-full p-3 mb-3 rounded-2xl"
         >

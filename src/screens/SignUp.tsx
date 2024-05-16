@@ -30,6 +30,7 @@ export default function SignUp({ navigation }: Props) {
         account_id: auth.currentUser.uid,
         gender: gender,
         firstname: firstname,
+        email: email,
       });
     } catch (error) {
       Alert.alert("Error", error.message);

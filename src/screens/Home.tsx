@@ -39,7 +39,7 @@ export default function Home({ navigation }: Props) {
         Alert.alert("Error", error.message);
       }
     };
-    fetchChildren();
+    navigation.addListener("focus", fetchChildren);
   }, [auth.currentUser.uid]);
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);

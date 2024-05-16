@@ -13,7 +13,7 @@ export default function Sentence() {
       try {
         const q = query(collection(db, "sentences"), limit(1));
         const sentences = await getDocs(q);
-        setSentence(sentences.docs[0].data().content);
+        setSentence(sentences.docs[0].data()["content_m_m"]);
       } catch (error) {
         Alert.alert("Error", error.message);
       }

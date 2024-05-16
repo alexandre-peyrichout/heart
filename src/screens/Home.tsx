@@ -43,18 +43,19 @@ export default function Home({ navigation }: Props) {
   }, [auth.currentUser.uid]);
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [selectedChildId, setSelectedChildId] = useState("");
+  const [selectedChild, setSelectedChild] = useState(null);
 
   const handleDeleteConfirmation = (id: string) => {
-    setSelectedChildId(id);
+    const currentChild = children.find((child) => child.id === id);
+    setSelectedChild(currentChild);
     setShowDeleteConfirmation(true);
   };
 
   const handleDeleteChild = async () => {
     try {
       setIsLoading(true);
-      await deleteDoc(doc(loggedInUser.doc, `/children/${selectedChildId}`));
-      setChildren(children.filter((child) => child.id !== selectedChildId));
+      await deleteDoc(doc(loggedInUser.doc, `/children/${selectedChild.id}`));
+      setChildren(children.filter((child) => child.id !== selectedChild.id));
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
@@ -92,12 +93,14 @@ export default function Home({ navigation }: Props) {
           onPress={() => navigation.navigate("AddChild")}
           className="bg-black w-full p-3 rounded-2xl"
         >
-          <Text className="text-white font-bold text-xl text-center">Add</Text>
+          <Text className="text-white font-bold text-xl text-center">
+            Ajouter mon enfant
+          </Text>
         </TouchableOpacity>
       </View>
       <View className="mx-4">
         <Text className="text-black text-lg mt-4 text-center">
-          Logged in as: {auth.currentUser.email}
+          connecté avec: {auth.currentUser.email}
         </Text>
         <TouchableOpacity
           className="bg-black w-full p-3 rounded-2xl"
@@ -105,7 +108,7 @@ export default function Home({ navigation }: Props) {
           disabled={isLoading}
         >
           <Text className="text-white font-bold text-xl text-center">
-            Log Out
+            Me déconnecter
           </Text>
         </TouchableOpacity>
       </View>
@@ -113,20 +116,20 @@ export default function Home({ navigation }: Props) {
         <View className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
           <View className="bg-white p-4 rounded-lg">
             <Text className="text-black text-lg mb-2">
-              Are you sure you want to delete this child?
+              Êtes-vous sûre de vouloir supprimer {selectedChild.name} ?
             </Text>
             <View className="flex justify-center">
               <TouchableOpacity
                 onPress={handleDeleteChild}
-                className="bg-red-500 p-2 rounded-lg mx-2"
+                className="bg-red-500 p-3 rounded-lg m-2"
               >
-                <Text className="text-white">Delete</Text>
+                <Text className="text-white">Supprimer</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setShowDeleteConfirmation(false)}
-                className="bg-gray-500 p-2 rounded-lg mx-2"
+                className="bg-gray-500 p-3 rounded-lg mx-2"
               >
-                <Text className="text-white">Cancel</Text>
+                <Text className="text-white">Annuler</Text>
               </TouchableOpacity>
             </View>
           </View>

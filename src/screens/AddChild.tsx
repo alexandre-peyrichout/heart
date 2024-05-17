@@ -48,7 +48,7 @@ export default function AddChild({ navigation }: Props) {
   const uploadImage = async () => {
     const response = await fetch(image);
     const blob = await response.blob();
-    const fileRef = ref(getStorage(), `profilePictures/${uuid.v4()}`);
+    const fileRef = ref(getStorage(), `${loggedInUser.doc.id}/${uuid.v4()}`);
     const result = await uploadBytes(fileRef, blob);
     try {
       await ref;

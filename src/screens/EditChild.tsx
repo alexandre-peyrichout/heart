@@ -72,7 +72,7 @@ export default function EditChild({ navigation, route }: Props) {
     if (image && image !== child.data().picture) {
       const response = await fetch(image);
       const blob = await response.blob();
-      const fileRef = ref(getStorage(), `profilePictures/${uuid.v4()}`);
+      const fileRef = ref(getStorage(), `${loggedInUser.doc.id}/${uuid.v4()}`);
       const result = await uploadBytes(fileRef, blob);
       try {
         await ref;

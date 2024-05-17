@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { useAuth } from "../context/Auth";
 import AddChild from "../screens/AddChild";
+import EditChild from "../screens/EditChild";
 import Home from "../screens/Home";
 import ResetPassword from "../screens/ResetPassword";
 import Sentence from "../screens/Sentence";
@@ -17,6 +18,7 @@ export type RootStackParamList = {
   Home: undefined;
   Sentence: undefined;
   AddChild: undefined;
+  EditChild: { childId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -42,6 +44,11 @@ export default function StackNavigator() {
             name="AddChild"
             component={AddChild}
             options={{ title: "Ajouter mon enfant" }}
+          />
+          <Stack.Screen
+            name="EditChild"
+            component={EditChild}
+            options={{ title: "Modifier mon enfant" }}
           />
         </>
       ) : (

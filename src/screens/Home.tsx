@@ -80,12 +80,20 @@ export default function Home({ navigation }: Props) {
             <Text className="text-black text-lg mt-2 text-center">
               {child.name}
             </Text>
-            <TouchableOpacity
-              onPress={() => handleDeleteConfirmation(child.id)}
-              className="absolute top-2 right-2"
-            >
-              <Text className="text-black text-lg mt-2 text-center">X</Text>
-            </TouchableOpacity>
+            <View className="absolute top-2 right-2">
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("EditChild", { childId: child.id })
+                }
+              >
+                <Text className="text-black mt-2 text-right">Éditer</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleDeleteConfirmation(child.id)}
+              >
+                <Text className="text-black mt-2 text-right">Supprimer</Text>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
         ))}
         <TouchableOpacity

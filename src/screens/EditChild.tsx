@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -13,7 +13,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import uuid from "react-native-uuid";
@@ -22,14 +22,37 @@ import { useAuth } from "../context/Auth";
 import { RootStackParamList } from "../navigation/Stack";
 import { db } from "../services/firebase";
 
-type Props = NativeStackScreenProps<RootStackParamList, "AddChild">;
+type Props = NativeStackScreenProps<RootStackParamList, "EditChild">;
 
-export default function AddChild({ navigation }: Props) {
+export default function EditChild({ navigation, route }: Props) {
+  const { childId } = route.params;
   const [name, setName] = useState("");
   const [gender, setGender] = useState<string>("male");
   const [birthDate, setBirthDate] = useState(new Date());
   const [image, setImage] = useState(null);
+  const [child, setChild] = useState(null);
   const { loggedInUser } = useAuth();
+
+  const childDoc = doc(db, `${loggedInUser.doc.path}/children/${childId}`);
+
+  useEffect(() => {
+    const fetchChild = async () => {
+      try {
+        const child = await getDoc(childDoc);
+        setChild(child);
+        const { name, gender, birth_date, picture } = child.data();
+        setName(name);
+        setGender(gender);
+        setBirthDate(
+          new Date(birth_date.seconds * 1000 + birth_date.nanoseconds / 1000000)
+        );
+        setImage(picture);
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      }
+    };
+    fetchChild();
+  }, []);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -46,17 +69,21 @@ export default function AddChild({ navigation }: Props) {
   };
 
   const uploadImage = async () => {
-    const response = await fetch(image);
-    const blob = await response.blob();
-    const fileRef = ref(getStorage(), `profilePictures/${uuid.v4()}`);
-    const result = await uploadBytes(fileRef, blob);
-    try {
-      await ref;
-    } catch (e) {
-      Alert.alert("Error", e.message);
+    if (image && image !== child.data().picture) {
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const fileRef = ref(getStorage(), `profilePictures/${uuid.v4()}`);
+      const result = await uploadBytes(fileRef, blob);
+      try {
+        await ref;
+      } catch (e) {
+        Alert.alert("Error", e.message);
+      }
+      setImage(null);
+      return await getDownloadURL(result.ref);
+    } else {
+      return child.data().picture;
     }
-    setImage(null);
-    return await getDownloadURL(result.ref);
   };
 
   const handleNameChange = (text: string) => {
@@ -73,10 +100,11 @@ export default function AddChild({ navigation }: Props) {
     // Upload the image to Firebase Storage
     const uploadedImageUrl = await uploadImage();
 
-    const createChildDocument = async () => {
+    const updateChildDocument = async () => {
       try {
-        await addDoc(collection(db, `${loggedInUser.doc.path}/children/`), {
+        await updateDoc(childDoc, {
           name,
+          gender,
           birth_date: birthDate,
           picture: uploadedImageUrl,
         });
@@ -85,7 +113,7 @@ export default function AddChild({ navigation }: Props) {
       }
     };
 
-    createChildDocument();
+    updateChildDocument();
     navigation.navigate("Home");
   };
 
@@ -177,7 +205,7 @@ export default function AddChild({ navigation }: Props) {
           className="bg-black w-full p-3 mb-3 rounded-2xl"
         >
           <Text className="text-white font-bold text-xl text-center">
-            Ajouter mon enfant
+            Mettre à jour
           </Text>
         </TouchableOpacity>
       </View>

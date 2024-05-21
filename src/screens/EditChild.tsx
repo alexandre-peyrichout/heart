@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Alert,
   Image,
+  Modal,
   Text,
   TextInput,
   TouchableOpacity,
@@ -18,10 +19,15 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import uuid from "react-native-uuid";
 
+import ChildFemaleImage1 from "../assets/images/child_female_1.png";
+import ChildFemaleImage2 from "../assets/images/child_female_2.png";
+import ChildFemaleImage3 from "../assets/images/child_female_3.png";
+import ChildMaleImage1 from "../assets/images/child_male_1.png";
+import ChildMaleImage2 from "../assets/images/child_male_2.png";
+import ChildMaleImage3 from "../assets/images/child_male_3.png";
 import { useAuth } from "../context/Auth";
 import { RootStackParamList } from "../navigation/Stack";
 import { db } from "../services/firebase";
-
 type Props = NativeStackScreenProps<RootStackParamList, "EditChild">;
 
 export default function EditChild({ navigation, route }: Props) {
@@ -29,30 +35,45 @@ export default function EditChild({ navigation, route }: Props) {
   const [name, setName] = useState("");
   const [gender, setGender] = useState<string>("male");
   const [birthDate, setBirthDate] = useState(new Date());
+  const [avatar, setAvatar] = useState<string>("child_male_1");
   const [image, setImage] = useState(null);
   const [child, setChild] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const { loggedInUser } = useAuth();
 
   const childDoc = doc(db, `${loggedInUser.doc.path}/children/${childId}`);
+
+  const avatars = [
+    { id: "child_male_1", image: ChildMaleImage1 },
+    { id: "child_female_1", image: ChildFemaleImage1 },
+    { id: "child_male_2", image: ChildMaleImage2 },
+    { id: "child_female_2", image: ChildFemaleImage2 },
+    { id: "child_male_3", image: ChildMaleImage3 },
+    { id: "child_female_3", image: ChildFemaleImage3 },
+  ];
 
   useEffect(() => {
     const fetchChild = async () => {
       try {
         const child = await getDoc(childDoc);
         setChild(child);
-        const { name, gender, birth_date, picture } = child.data();
+        const { name, gender, birth_date, avatar } = child.data();
         setName(name);
         setGender(gender);
         setBirthDate(
           new Date(birth_date.seconds * 1000 + birth_date.nanoseconds / 1000000)
         );
-        setImage(picture);
+        setAvatar(avatar);
       } catch (error) {
         Alert.alert("Error", error.message);
       }
     };
     fetchChild();
   }, []);
+
+  const pickAvatar = () => {
+    setModalVisible(true);
+  };
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -179,11 +200,15 @@ export default function EditChild({ navigation, route }: Props) {
           />
         </Animated.View>
 
-        {image ? (
+        {avatar ? (
           <>
-            <Image source={{ uri: image }} className="w-40 h-40 mx-auto" />
+            <Image
+              source={avatars.find((a) => a.id === avatar)?.image}
+              resizeMode="contain"
+              className="w-2/4 h-40 mx-auto"
+            />
             <TouchableOpacity
-              onPress={() => setImage(null)}
+              onPress={() => setAvatar(null)}
               className="p-3 mb-3 rounded-2xl bg-red-500 w-30 mx-auto mt-2"
             >
               <Text className="text-center">Supprimer</Text>
@@ -192,11 +217,9 @@ export default function EditChild({ navigation, route }: Props) {
         ) : (
           <TouchableOpacity
             className="w-40 h-40 mx-auto bg-gray-400 justify-center"
-            onPress={pickImage}
+            onPress={pickAvatar}
           >
-            <Text className="text-white text-center">
-              Télécharger une image
-            </Text>
+            <Text className="text-white text-center">Choisir un avatar</Text>
           </TouchableOpacity>
         )}
 
@@ -209,6 +232,44 @@ export default function EditChild({ navigation, route }: Props) {
           </Text>
         </TouchableOpacity>
       </View>
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <TouchableOpacity
+          onPress={() => setModalVisible(false)}
+          className="flex justify-center items-center h-full bg-black/50"
+        >
+          <View className="flex-row flex-wrap bg-white rounded-2xl m-10 p-4">
+            {avatars.map((avatar) => (
+              <TouchableOpacity
+                key={avatar.id}
+                className="w-1/2 mb-4"
+                onPress={() => {
+                  setAvatar(avatar.id);
+                  setModalVisible(false);
+                }}
+              >
+                <Image
+                  source={avatar.image}
+                  resizeMode="contain"
+                  className="h-24 w-20 mx-auto"
+                />
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              onPress={() => pickImage()}
+              className="w-full h-24 flex justify-center items-center p-2 mb-"
+            >
+              <Text className="text-black text-center">
+                Télécharger une photo
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }

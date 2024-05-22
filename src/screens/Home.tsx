@@ -4,6 +4,7 @@ import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 
+import { AVATARS } from "../components/AvatarPicker";
 import { useAuth } from "../context/Auth";
 import { RootStackParamList } from "../navigation/Stack";
 import { auth } from "../services/firebase";
@@ -64,6 +65,13 @@ export default function Home({ navigation }: Props) {
     }
   };
 
+  const getPictureOrAvatar = (child) => {
+    if (child.picture) {
+      return { uri: child.picture };
+    }
+    return AVATARS.find((avatar) => avatar.id === child.avatar_id)?.image;
+  };
+
   return (
     <View className="bg-white w-full h-full flex justify-around">
       <View className="flex justify-center mx-4">
@@ -74,7 +82,8 @@ export default function Home({ navigation }: Props) {
             className="bg-gray-200 p-4 rounded-2xl my-2"
           >
             <Image
-              source={{ uri: child.picture }}
+              source={getPictureOrAvatar(child)}
+              resizeMode="contain"
               className="w-32 h-32 mx-auto"
             />
             <Text className="text-black text-lg mt-2 text-center">

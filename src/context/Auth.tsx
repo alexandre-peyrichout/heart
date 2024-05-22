@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 import { User } from "firebase/auth";
 import {
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
             setLoggedInUser({ user, doc: doc.ref });
           });
         } catch (error) {
-          console.error(error);
+          Alert.alert("Erreur", error.message);
         }
       } else {
         setLoggedInUser(null);

@@ -1,23 +1,16 @@
 import React, { useState } from "react";
-import {
-  Alert,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import * as ImagePicker from "expo-image-picker";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import uuid from "react-native-uuid";
 
+import AvatarPicker from "../components/AvatarPicker";
 import { useAuth } from "../context/Auth";
 import { RootStackParamList } from "../navigation/Stack";
 import { db } from "../services/firebase";
@@ -25,27 +18,15 @@ import { db } from "../services/firebase";
 type Props = NativeStackScreenProps<RootStackParamList, "AddChild">;
 
 export default function AddChild({ navigation }: Props) {
+  const [avatar, setAvatar] = useState(null);
   const [name, setName] = useState("");
   const [gender, setGender] = useState<string>("male");
   const [birthDate, setBirthDate] = useState(new Date());
   const [image, setImage] = useState(null);
   const { loggedInUser } = useAuth();
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
-
   const uploadImage = async () => {
+    if (!image) return null;
     const response = await fetch(image);
     const blob = await response.blob();
     const fileRef = ref(getStorage(), `${loggedInUser.doc.id}/${uuid.v4()}`);
@@ -68,7 +49,7 @@ export default function AddChild({ navigation }: Props) {
   };
 
   const handleSubmit = async () => {
-    if (!name || !birthDate)
+    if (!name || !birthDate || !gender)
       Alert.alert("Erreur", "Veuillez remplir tous les champs.");
     // Upload the image to Firebase Storage
     const uploadedImageUrl = await uploadImage();
@@ -79,6 +60,7 @@ export default function AddChild({ navigation }: Props) {
           name,
           birth_date: birthDate,
           picture: uploadedImageUrl,
+          avatar_id: avatar?.id,
         });
       } catch (error) {
         Alert.alert("Error creating child document:", error);
@@ -150,28 +132,12 @@ export default function AddChild({ navigation }: Props) {
             onChange={handleBirthDateChange}
           />
         </Animated.View>
-
-        {image ? (
-          <>
-            <Image source={{ uri: image }} className="w-40 h-40 mx-auto" />
-            <TouchableOpacity
-              onPress={() => setImage(null)}
-              className="p-3 mb-3 rounded-2xl bg-red-500 w-30 mx-auto mt-2"
-            >
-              <Text className="text-center">Supprimer</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <TouchableOpacity
-            className="w-40 h-40 mx-auto bg-gray-400 justify-center"
-            onPress={pickImage}
-          >
-            <Text className="text-white text-center">
-              Télécharger une image
-            </Text>
-          </TouchableOpacity>
-        )}
-
+        <AvatarPicker
+          image={image}
+          avatar={avatar}
+          setAvatar={setAvatar}
+          setImage={setImage}
+        />
         <TouchableOpacity
           onPress={handleSubmit}
           className="bg-black w-full p-3 mb-3 rounded-2xl"

@@ -23,6 +23,7 @@ export default function AddChild({ navigation }: Props) {
   const [gender, setGender] = useState<string>("male");
   const [birthDate, setBirthDate] = useState(new Date());
   const [image, setImage] = useState(null);
+  const [pictureMode, setPictureMode] = useState(null);
   const { loggedInUser } = useAuth();
 
   const uploadImage = async () => {
@@ -36,7 +37,6 @@ export default function AddChild({ navigation }: Props) {
     } catch (e) {
       Alert.alert("Error", e.message);
     }
-    setImage(null);
     return await getDownloadURL(result.ref);
   };
 
@@ -58,9 +58,11 @@ export default function AddChild({ navigation }: Props) {
       try {
         await addDoc(collection(db, `${loggedInUser.doc.path}/children/`), {
           name,
+          gender,
           birth_date: birthDate,
-          picture: uploadedImageUrl,
-          avatar_id: avatar?.id,
+          picture: uploadedImageUrl || "",
+          avatar_id: avatar?.id || "",
+          picture_mode: pictureMode,
         });
       } catch (error) {
         Alert.alert("Error creating child document:", error);
@@ -135,8 +137,10 @@ export default function AddChild({ navigation }: Props) {
         <AvatarPicker
           image={image}
           avatar={avatar}
+          pictureMode={pictureMode}
           setAvatar={setAvatar}
           setImage={setImage}
+          setPictureMode={setPictureMode}
         />
         <TouchableOpacity
           onPress={handleSubmit}

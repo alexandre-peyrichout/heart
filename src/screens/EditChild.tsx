@@ -23,6 +23,7 @@ export default function EditChild({ navigation, route }: Props) {
   const [birthDate, setBirthDate] = useState(new Date());
   const [avatar, setAvatar] = useState(AVATARS[0]);
   const [image, setImage] = useState(null);
+  const [pictureMode, setPictureMode] = useState(null);
   const [child, setChild] = useState(null);
   const { loggedInUser } = useAuth();
 
@@ -33,12 +34,14 @@ export default function EditChild({ navigation, route }: Props) {
       try {
         const child = await getDoc(childDoc);
         setChild(child);
-        const { name, gender, birth_date, avatar_id, picture } = child.data();
+        const { name, gender, birth_date, avatar_id, picture, picture_mode } =
+          child.data();
         setName(name);
         setGender(gender);
         setBirthDate(
           new Date(birth_date.seconds * 1000 + birth_date.nanoseconds / 1000000)
         );
+        setPictureMode(picture_mode);
         setImage(picture);
         setAvatar(AVATARS.find((a) => a.id === avatar_id));
       } catch (error) {
@@ -59,7 +62,6 @@ export default function EditChild({ navigation, route }: Props) {
       } catch (e) {
         Alert.alert("Error", e.message);
       }
-      setImage(null);
       return await getDownloadURL(result.ref);
     } else {
       return child.data().picture;
@@ -87,7 +89,8 @@ export default function EditChild({ navigation, route }: Props) {
           gender,
           birth_date: birthDate,
           picture: uploadedImageUrl || "",
-          avatar_id: avatar?.id,
+          avatar_id: avatar?.id || "",
+          picture_mode: pictureMode,
         });
       } catch (error) {
         Alert.alert("Error creating child document:", error);
@@ -161,8 +164,10 @@ export default function EditChild({ navigation, route }: Props) {
         <AvatarPicker
           image={image}
           avatar={avatar}
+          pictureMode={pictureMode}
           setAvatar={setAvatar}
           setImage={setImage}
+          setPictureMode={setPictureMode}
         />
         <TouchableOpacity
           onPress={handleSubmit}

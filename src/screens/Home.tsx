@@ -15,6 +15,8 @@ export default function Home({ navigation }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [children, setChildren] = useState([]);
   const { loggedInUser } = useAuth();
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [selectedChild, setSelectedChild] = useState(null);
 
   const handleLogOut = async () => {
     try {
@@ -43,9 +45,6 @@ export default function Home({ navigation }: Props) {
     navigation.addListener("focus", fetchChildren);
   }, [auth.currentUser.uid]);
 
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [selectedChild, setSelectedChild] = useState(null);
-
   const handleDeleteConfirmation = (id: string) => {
     const currentChild = children.find((child) => child.id === id);
     setSelectedChild(currentChild);
@@ -66,9 +65,10 @@ export default function Home({ navigation }: Props) {
   };
 
   const getPictureOrAvatar = (child) => {
-    if (child.picture) {
+    if (child.picture && child.picture_mode === "photo") {
       return { uri: child.picture };
     }
+
     return AVATARS.find((avatar) => avatar.id === child.avatar_id)?.image;
   };
 

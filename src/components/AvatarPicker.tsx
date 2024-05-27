@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, TouchableOpacity, View } from "react-native";
 
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
+import { Card, Icon, IconButton, Modal, Portal } from "react-native-paper";
 
 import ChildFemaleImage1 from "../assets/images/child_female_1.png";
 import ChildFemaleImage2 from "../assets/images/child_female_2.png";
@@ -20,6 +21,8 @@ export const AVATARS = [
   { id: "child_female_3", image: ChildFemaleImage3 },
 ];
 
+const screenWidth = Dimensions.get("window")?.width;
+
 export default function AvatarPicker({
   avatar,
   image,
@@ -29,7 +32,6 @@ export default function AvatarPicker({
   setPictureMode,
 }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [shownImage, setShownImage] = useState(null);
 
   const pickAvatar = (avatar) => {
     setAvatar(avatar);
@@ -37,8 +39,8 @@ export default function AvatarPicker({
     setModalVisible(false);
   };
 
-  const pickImage = () => {
-    setImage(shownImage);
+  const pickImage = (image) => {
+    setImage(image);
     setPictureMode("photo");
     setModalVisible(false);
   };
@@ -47,7 +49,7 @@ export default function AvatarPicker({
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
     });
     if (!result.canceled) {
@@ -56,85 +58,96 @@ export default function AvatarPicker({
         [{ resize: { height: 400 } }],
         { compress: 0.5, format: SaveFormat.JPEG }
       );
-      setShownImage(manipulatedResult.uri);
+      pickImage(manipulatedResult.uri);
     }
   };
+  console.log(screenWidth);
 
   return (
     <>
       {avatar || image ? (
-        <>
+        <TouchableOpacity
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
           <Image
             source={pictureMode === "photo" ? { uri: image } : avatar?.image}
-            resizeMode="contain"
-            className="w-2/4 h-40 mx-auto"
+            resizeMode="cover"
+            style={{ height: screenWidth }}
+            className={`w-full mx-auto`}
           />
-          <TouchableOpacity
-            onPress={() => {
-              setModalVisible(true);
-            }}
-            className="p-3 mb-3 rounded-2xl bg-red-500 w-30 mx-auto mt-2"
-          >
-            <Text className="text-center">Changer</Text>
-          </TouchableOpacity>
-        </>
+          <IconButton
+            mode="contained"
+            icon="pencil"
+            className="absolute top-0 right-0"
+          />
+        </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          className="w-40 h-40 mx-auto bg-gray-400 justify-center"
+          className="w-full mx-auto bg-gray-400 justify-center items-center"
+          style={{ height: screenWidth }}
           onPress={() => setModalVisible(true)}
         >
-          <Text className="text-white text-center p-4">
-            Choisir un avatar ou une photo de profil
-          </Text>
+          <Icon source="face-recognition" size={screenWidth / 2} />
+          <IconButton
+            mode="contained"
+            icon="pencil"
+            className="absolute top-0 right-0"
+          />
         </TouchableOpacity>
       )}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <TouchableOpacity
-          onPress={() => setModalVisible(false)}
-          className="flex justify-center items-center h-full bg-black/50"
-        >
-          <View className="flex-row flex-wrap bg-white rounded-2xl m-10 p-4">
-            {AVATARS.map((avatarObj) => (
-              <TouchableOpacity
-                key={avatarObj.id}
-                className={`rounded-xl w-1/2 mb-4 p-4 ${avatarObj.id === avatar?.id && pictureMode === "avatar" && "border-2"}`}
-                onPress={() => pickAvatar(avatarObj)}
-              >
-                <Image
-                  source={avatarObj.image}
-                  resizeMode="contain"
-                  className="h-24 w-20 mx-auto"
-                />
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              onPress={() => pickFromCamera()}
-              className="w-1/2 h-24 flex justify-center items-center p-2"
-            >
-              <Text className="text-black text-center">
-                Télécharger une photo
-              </Text>
-            </TouchableOpacity>
-            {image || shownImage ? (
-              <TouchableOpacity
-                onPress={pickImage}
-                className={`rounded-xl w-1/2 h-24 flex justify-center items-center p-4 ${pictureMode === "photo" && "border-2"}`}
-              >
-                <Image
-                  source={{ uri: shownImage || image }}
-                  resizeMode="contain"
-                  className="h-24 w-20 mx-auto"
-                />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <Portal>
+        <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)}>
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            className="flex justify-center items-center h-full bg-black/50"
+          >
+            <View className="flex-row flex-wrap bg-white rounded-2xl m-10 justify-center pt-2 pb-2">
+              {AVATARS.map((avatarObj) => (
+                <Card
+                  onPress={() => pickAvatar(avatarObj)}
+                  mode={
+                    avatarObj.id === avatar?.id && pictureMode === "avatar"
+                      ? "outlined"
+                      : "elevated"
+                  }
+                  key={avatarObj.id}
+                  className="m-2"
+                >
+                  <Card.Cover
+                    source={avatarObj.image}
+                    resizeMode="contain"
+                    style={{ width: screenWidth / 3, height: screenWidth / 3 }}
+                  />
+                </Card>
+              ))}
+              <Card onPress={pickFromCamera} mode="elevated" className="m-2">
+                <Card.Content
+                  className="flex justify-center items-center"
+                  style={{ width: screenWidth / 3, height: screenWidth / 3 }}
+                >
+                  <Icon source="camera" size={80} />
+                </Card.Content>
+              </Card>
+
+              {image ? (
+                <Card
+                  onPress={() => pickImage(image)}
+                  mode={pictureMode === "photo" ? "outlined" : "elevated"}
+                  className="m-2"
+                >
+                  <Card.Cover
+                    source={{ uri: image }}
+                    resizeMode="cover"
+                    style={{ width: screenWidth / 3, height: screenWidth / 3 }}
+                  />
+                </Card>
+              ) : null}
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </Portal>
     </>
   );
 }

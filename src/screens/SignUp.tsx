@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, View } from "react-native";
 
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
 
 import { RootStackParamList } from "../navigation/Stack";
 import { auth, db } from "../services/firebase";
@@ -13,11 +13,12 @@ type Props = NativeStackScreenProps<RootStackParamList, "SignUp">;
 
 export default function SignUp({ navigation }: Props) {
   const [email, setEmail] = useState<string>("");
-  const [gender, setGender] = useState<string>("male");
+  const [gender, setGender] = useState<string>(null);
   const [firstname, setFirstname] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
 
   const handleSignUp = async () => {
     if (password !== confirmPassword)
@@ -40,115 +41,104 @@ export default function SignUp({ navigation }: Props) {
   };
 
   return (
-    <View className="bg-white w-full h-full flex justify-around">
-      <View className="mx-4 space-y-4">
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(1000).springify()}
-        >
-          <Text className="text-gray-500 font-bold ml-2 mb-2">Je suis:</Text>
-          <View className="flex-row bg-black/5 p-5 rounded-2xl w-full">
-            <TouchableOpacity
-              className="flex-row items-center mr-4"
-              onPress={() => setGender("male")}
-            >
-              <View
-                className={`w-4 h-4 rounded-full border-2 ${
-                  gender === "male"
-                    ? "bg-blue-500 border-blue-500"
-                    : "border-gray-400"
-                }`}
-              />
-              <Text className="text-gray-500 ml-2">Un papa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex-row items-center"
-              onPress={() => setGender("female")}
-            >
-              <View
-                className={`w-4 h-4 rounded-full border-2 ${
-                  gender === "female"
-                    ? "bg-pink-500 border-pink-500"
-                    : "border-gray-400"
-                }`}
-              />
-              <Text className="text-gray-500 ml-2">Une maman</Text>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(1000).springify()}
-          className="bg-black/5 p-5 rounded-2xl w-full"
-        >
-          <TextInput
-            placeholder="Prénom"
-            placeholderTextColor={"gray"}
-            value={firstname}
-            onChangeText={setFirstname}
+    <View className="w-full h-full ">
+      <View className="m-4 space-y-4">
+        <View className="flex-row space-x-6 justify-center">
+          <IconButton
+            mode="contained"
+            iconColor="blue"
+            size={60}
+            icon="human-male"
+            onPress={() => setGender("male")}
+            className={`bg-blue-100 ${gender === "male" && "border-2 border-blue-500"}`}
           />
-        </Animated.View>
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(1000).springify()}
-          className="bg-black/5 p-5 rounded-2xl w-full"
-        >
-          <TextInput
-            placeholder="Émail"
-            placeholderTextColor={"gray"}
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            inputMode="email"
+          <IconButton
+            mode="contained"
+            iconColor="pink"
+            size={60}
+            icon="human-female"
+            onPress={() => setGender("female")}
+            className={`bg-pink-100 ${gender === "female" && "border-2 border-pink-500"}`}
           />
-        </Animated.View>
+        </View>
+        <TextInput
+          mode="outlined"
+          label="Prénom"
+          value={firstname}
+          onChangeText={setFirstname}
+        />
+        <TextInput
+          mode="outlined"
+          label="Émail"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          inputMode="email"
+        />
 
-        <Animated.View
-          entering={FadeInDown.delay(400).duration(1000).springify()}
-          className="bg-black/5 p-5 rounded-2xl w-full"
+        <TextInput
+          mode="outlined"
+          label="Mot de passe"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          autoCapitalize="none"
+          right={
+            secureTextEntry ? (
+              <TextInput.Icon
+                icon="eye"
+                onPress={() => setSecureTextEntry(false)}
+              />
+            ) : (
+              <TextInput.Icon
+                icon="eye-off"
+                onPress={() => setSecureTextEntry(true)}
+              />
+            )
+          }
+        />
+
+        <TextInput
+          mode="outlined"
+          label="Confirmer le mot de passe"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          autoCapitalize="none"
+          right={
+            secureTextEntry ? (
+              <TextInput.Icon
+                icon="eye"
+                onPress={() => setSecureTextEntry(false)}
+              />
+            ) : (
+              <TextInput.Icon
+                icon="eye-off"
+                onPress={() => setSecureTextEntry(true)}
+              />
+            )
+          }
+        />
+        <Button
+          mode="contained"
+          onPress={handleSignUp}
+          disabled={
+            isLoading ||
+            !email ||
+            !password ||
+            !confirmPassword ||
+            !gender ||
+            !firstname
+          }
         >
-          <TextInput
-            placeholder="Mot de passe"
-            placeholderTextColor={"gray"}
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            autoCapitalize="none"
-          />
-        </Animated.View>
-        <Animated.View
-          entering={FadeInDown.delay(400).duration(1000).springify()}
-          className="bg-black/5 p-5 rounded-2xl w-full mb-3"
-        >
-          <TextInput
-            placeholder="Confirmer le mot de passe"
-            placeholderTextColor={"gray"}
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            autoCapitalize="none"
-          />
-        </Animated.View>
-        <Animated.View
-          entering={FadeInDown.delay(600).duration(1000).springify()}
-          className="w-full"
-        >
-          <TouchableOpacity
-            className="bg-black w-full p-3 mb-3 rounded-2xl"
-            onPress={handleSignUp}
-            disabled={isLoading || !email || !password || !confirmPassword}
-          >
-            <Text className="text-white font-bold text-xl text-center">
-              M'inscrire
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
-        <Animated.View
-          entering={FadeInDown.delay(800).duration(1000).springify()}
-          className="flex-row justify-center"
-        >
+          M'inscrire
+        </Button>
+        <View className="flex-row justify-center items-center">
           <Text>Vous avez déjà un compte? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-            <Text className="text-sky-600">Se connecter</Text>
-          </TouchableOpacity>
-        </Animated.View>
+          <Button mode="text" onPress={() => navigation.navigate("SignIn")}>
+            Se connecter
+          </Button>
+        </View>
       </View>
     </View>
   );

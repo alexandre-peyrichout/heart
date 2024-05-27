@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, View } from "react-native";
 
 import { collection, getDocs, limit, query } from "firebase/firestore";
+import { Text } from "react-native-paper";
 
 import { db } from "../services/firebase";
 
@@ -24,7 +25,7 @@ export default function Sentence() {
   return (
     <View className="bg-white w-full h-full flex justify-around">
       <View className="flex justify-center mx-4">
-        <Text className="text-black text-lg mt-2 text-center">{sentence}</Text>
+        <Text variant="displayMedium">{sentence}</Text>
       </View>
     </View>
   );

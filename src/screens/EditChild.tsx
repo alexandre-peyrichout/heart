@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, View } from "react-native";
 
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { Button, IconButton, TextInput } from "react-native-paper";
+import { DatePickerInput } from "react-native-paper-dates";
 import uuid from "react-native-uuid";
 
 import AvatarPicker, { AVATARS } from "../components/AvatarPicker";
@@ -72,10 +70,6 @@ export default function EditChild({ navigation, route }: Props) {
     setName(text);
   };
 
-  const handleBirthDateChange = (event: DateTimePickerEvent, date: Date) => {
-    setBirthDate(date);
-  };
-
   const handleSubmit = async () => {
     if (!name || !birthDate || !gender)
       Alert.alert("Erreur", "Veuillez remplir tous les champs.");
@@ -101,82 +95,62 @@ export default function EditChild({ navigation, route }: Props) {
   };
 
   return (
-    <View className="bg-white w-full h-full flex justify-between">
-      <View className="m-4 space-y-4">
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(1000).springify()}
-          className="bg-black/5 p-5 rounded-2xl w-full"
-        >
-          <TextInput
-            placeholder="Prénom"
-            placeholderTextColor={"gray"}
-            value={name}
-            onChangeText={handleNameChange}
+    <View className="w-full h-full">
+      <AvatarPicker
+        image={image}
+        avatar={avatar}
+        pictureMode={pictureMode}
+        setAvatar={setAvatar}
+        setImage={setImage}
+        setPictureMode={setPictureMode}
+      />
+      <View className="flex justify-center m-4">
+        <View className="flex-row space-x-6 justify-center mb-2">
+          <IconButton
+            mode="contained"
+            iconColor="blue"
+            size={60}
+            icon="human-male"
+            onPress={() => setGender("male")}
+            className={`bg-blue-100 ${gender === "male" && "border-2 border-blue-500"}`}
           />
-        </Animated.View>
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(1000).springify()}
-        >
-          <Text className="text-gray-500 font-bold ml-2 mb-2">
-            Sexe de naissance:
-          </Text>
-          <View className="flex-row bg-black/5 p-5 rounded-2xl w-full">
-            <TouchableOpacity
-              className="flex-row items-center mr-4"
-              onPress={() => setGender("male")}
-            >
-              <View
-                className={`w-4 h-4 rounded-full border-2 ${
-                  gender === "male"
-                    ? "bg-blue-500 border-blue-500"
-                    : "border-gray-400"
-                }`}
-              />
-              <Text className="text-gray-500 ml-2">Garçon</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex-row items-center"
-              onPress={() => setGender("female")}
-            >
-              <View
-                className={`w-4 h-4 rounded-full border-2 ${
-                  gender === "female"
-                    ? "bg-pink-500 border-pink-500"
-                    : "border-gray-400"
-                }`}
-              />
-              <Text className="text-gray-500 ml-2">Fille</Text>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(1000).springify()}
-          className=" p-5 rounded-2xl w-full flex-row justify-between items-center"
-        >
-          <Text>Date de naissance: </Text>
-          <DateTimePicker
-            locale="fr-FR"
-            mode="date"
-            value={birthDate}
-            onChange={handleBirthDateChange}
+          <IconButton
+            mode="contained"
+            iconColor="pink"
+            size={60}
+            icon="human-female"
+            onPress={() => setGender("female")}
+            className={`bg-pink-100 ${gender === "female" && "border-2 border-pink-500"}`}
           />
-        </Animated.View>
-        <AvatarPicker
-          image={image}
-          avatar={avatar}
-          pictureMode={pictureMode}
-          setAvatar={setAvatar}
-          setImage={setImage}
-          setPictureMode={setPictureMode}
+        </View>
+        <TextInput
+          mode="outlined"
+          label="Prénom"
+          placeholderTextColor={"gray"}
+          value={name}
+          onChangeText={handleNameChange}
         />
-        <TouchableOpacity
-          onPress={handleSubmit}
-          className="bg-black w-full p-3 mb-3 rounded-2xl"
+        <View className="h-24">
+          <DatePickerInput
+            locale="fr"
+            label="Date de naissance"
+            value={birthDate}
+            onChange={setBirthDate}
+            inputMode="end"
+            mode="outlined"
+          />
+        </View>
+
+        <Button mode="contained" onPress={handleSubmit} className="mb-4">
+          Enregistrer
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => navigation.goBack()}
+          className="mb-4"
         >
-          <Text className="text-white font-bold text-xl text-center">
-            Mettre à jour
-          </Text>
-        </TouchableOpacity>
+          Annuler
+        </Button>
       </View>
     </View>
   );

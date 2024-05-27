@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { Alert, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import {
+  Badge,
+  Button,
+  Card,
+  Dialog,
+  IconButton,
+  Menu,
+  Portal,
+  Text,
+} from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AVATARS } from "../components/AvatarPicker";
 import { useAuth } from "../context/Auth";
@@ -73,82 +84,106 @@ export default function Home({ navigation }: Props) {
   };
 
   return (
-    <View className="bg-white w-full h-full flex justify-around">
-      <View className="flex justify-center mx-4">
-        {children.map((child, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => navigation.navigate("Sentence")}
-            className="bg-gray-200 p-4 rounded-2xl my-2"
+    <SafeAreaView edges={["right", "bottom", "left"]}>
+      <View className="w-full h-full">
+        <View className="flex justify-center mx-4">
+          {children.map((child, index) => (
+            <Card key={index} className="mt-4">
+              <View className="flex-row items-start">
+                <Card.Cover
+                  source={getPictureOrAvatar(child)}
+                  resizeMode="cover"
+                  className="w-1/2"
+                />
+                <View className="w-1/2">
+                  <Card.Title
+                    title={child.name}
+                    right={() => (
+                      <ActionMenu
+                        child={child}
+                        navigation={navigation}
+                        handleDeleteConfirmation={handleDeleteConfirmation}
+                      />
+                    )}
+                  />
+                  <View className="flex-row justify-center">
+                    <View className="relative">
+                      <IconButton
+                        size={48}
+                        icon="chat-processing"
+                        mode="contained"
+                        className="m-2 relative"
+                        onPress={() => navigation.navigate("Sentence")}
+                      />
+                      <Badge className="absolute top-2 right-2">1</Badge>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </Card>
+          ))}
+          <Button
+            className="mt-4"
+            mode="contained"
+            onPress={() => navigation.navigate("AddChild")}
           >
-            <Image
-              source={getPictureOrAvatar(child)}
-              resizeMode="contain"
-              className="w-32 h-32 mx-auto"
-            />
-            <Text className="text-black text-lg mt-2 text-center">
-              {child.name}
-            </Text>
-            <View className="absolute top-2 right-2">
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("EditChild", { childId: child.id })
-                }
-              >
-                <Text className="text-black mt-2 text-right">Éditer</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleDeleteConfirmation(child.id)}
-              >
-                <Text className="text-black mt-2 text-right">Supprimer</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        ))}
-        <TouchableOpacity
-          key="add"
-          onPress={() => navigation.navigate("AddChild")}
-          className="bg-black w-full p-3 rounded-2xl"
-        >
-          <Text className="text-white font-bold text-xl text-center">
-            Ajouter mon enfant
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View className="mx-4">
-        <TouchableOpacity
-          className="bg-black w-full p-3 rounded-2xl"
-          onPress={handleLogOut}
-          disabled={isLoading}
-        >
-          <Text className="text-white font-bold text-xl text-center">
-            Me déconnecter
-          </Text>
-        </TouchableOpacity>
-      </View>
-      {showDeleteConfirmation && (
-        <View className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <View className="bg-white p-4 rounded-lg">
-            <Text className="text-black text-lg mb-2">
-              Êtes-vous sûre de vouloir supprimer {selectedChild.name} ?
-            </Text>
-            <View className="flex justify-center">
-              <TouchableOpacity
-                onPress={handleDeleteChild}
-                className="bg-red-500 p-3 rounded-lg m-2"
-              >
-                <Text className="text-white">Supprimer</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setShowDeleteConfirmation(false)}
-                className="bg-gray-500 p-3 rounded-lg mx-2"
-              >
-                <Text className="text-white">Annuler</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+            Ajouter un enfant
+          </Button>
         </View>
-      )}
-    </View>
+        <Button onPress={handleLogOut}>Me déconnecter</Button>
+        <Portal>
+          <Dialog
+            visible={showDeleteConfirmation}
+            onDismiss={() => setShowDeleteConfirmation(false)}
+          >
+            <Dialog.Icon icon="alert" />
+            <Dialog.Title className="text-center">Confirmation</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">
+                Êtes-vous sûre de vouloir supprimer {selectedChild?.name}?
+              </Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => setShowDeleteConfirmation(false)}>
+                Annuler
+              </Button>
+              <Button disabled={isLoading} onPress={handleDeleteChild}>
+                Supprimer
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </View>
+    </SafeAreaView>
   );
 }
+
+const ActionMenu = ({ child, navigation, handleDeleteConfirmation }) => {
+  const [visible, setVisible] = useState(false);
+  return (
+    <Menu
+      visible={visible}
+      onDismiss={() => setVisible(false)}
+      anchor={
+        <IconButton icon="dots-vertical" onPress={() => setVisible(true)} />
+      }
+    >
+      <Menu.Item
+        onPress={() => {
+          navigation.navigate("EditChild", { childId: child.id });
+          setVisible(false);
+        }}
+        title="Edit"
+        leadingIcon="pencil"
+      />
+      <Menu.Item
+        onPress={() => {
+          handleDeleteConfirmation(child.id);
+          setVisible(false);
+        }}
+        title="Delete"
+        leadingIcon="delete"
+      />
+    </Menu>
+  );
+};

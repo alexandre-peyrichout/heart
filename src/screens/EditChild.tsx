@@ -4,7 +4,7 @@ import { Alert, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { Button, IconButton, TextInput } from "react-native-paper";
+import { Button, SegmentedButtons, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
 import uuid from "react-native-uuid";
 
@@ -94,6 +94,11 @@ export default function EditChild({ navigation, route }: Props) {
     navigation.navigate("Home");
   };
 
+  useEffect(() => {
+    if (avatar?.id.includes("female")) setGender("female");
+    else setGender("male");
+  }, [avatar]);
+
   return (
     <View className="w-full h-full">
       <AvatarPicker
@@ -105,25 +110,24 @@ export default function EditChild({ navigation, route }: Props) {
         setPictureMode={setPictureMode}
       />
       <View className="flex justify-center m-4">
-        <View className="flex-row space-x-6 justify-center mb-2">
-          <IconButton
-            mode="contained"
-            iconColor="blue"
-            size={60}
-            icon="human-male"
-            onPress={() => setGender("male")}
-            className={`bg-blue-100 ${gender === "male" && "border-2 border-blue-500"}`}
-          />
-          <IconButton
-            mode="contained"
-            iconColor="pink"
-            size={60}
-            icon="human-female"
-            onPress={() => setGender("female")}
-            className={`bg-pink-100 ${gender === "female" && "border-2 border-pink-500"}`}
-          />
-        </View>
+        <SegmentedButtons
+          value={gender}
+          onValueChange={setGender}
+          buttons={[
+            {
+              icon: "human-male",
+              value: "male",
+              label: "Garçon",
+            },
+            {
+              icon: "human-female",
+              value: "female",
+              label: "Fille",
+            },
+          ]}
+        />
         <TextInput
+          className="mt-4"
           mode="outlined"
           label="Prénom"
           placeholderTextColor={"gray"}
@@ -140,7 +144,6 @@ export default function EditChild({ navigation, route }: Props) {
             mode="outlined"
           />
         </View>
-
         <Button mode="contained" onPress={handleSubmit} className="mb-4">
           Enregistrer
         </Button>

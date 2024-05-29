@@ -61,7 +61,6 @@ export default function AvatarPicker({
       pickImage(manipulatedResult.uri);
     }
   };
-  console.log(screenWidth);
 
   return (
     <>

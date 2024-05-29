@@ -4,7 +4,7 @@ import { Alert, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
-import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
 
 import { RootStackParamList } from "../navigation/Stack";
 import { auth, db } from "../services/firebase";
@@ -43,24 +43,22 @@ export default function SignUp({ navigation }: Props) {
   return (
     <View className="w-full h-full ">
       <View className="m-4 space-y-4">
-        <View className="flex-row space-x-6 justify-center">
-          <IconButton
-            mode="contained"
-            iconColor="blue"
-            size={60}
-            icon="human-male"
-            onPress={() => setGender("male")}
-            className={`bg-blue-100 ${gender === "male" && "border-2 border-blue-500"}`}
-          />
-          <IconButton
-            mode="contained"
-            iconColor="pink"
-            size={60}
-            icon="human-female"
-            onPress={() => setGender("female")}
-            className={`bg-pink-100 ${gender === "female" && "border-2 border-pink-500"}`}
-          />
-        </View>
+        <SegmentedButtons
+          value={gender}
+          onValueChange={setGender}
+          buttons={[
+            {
+              icon: "human-male",
+              value: "male",
+              label: "Homme",
+            },
+            {
+              icon: "human-female",
+              value: "female",
+              label: "Femme",
+            },
+          ]}
+        />
         <TextInput
           mode="outlined"
           label="Prénom"

@@ -3,6 +3,7 @@ import { Alert, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import {
   Badge,
   Button,
@@ -20,7 +21,7 @@ import { useAuth } from "../context/Auth";
 import { RootStackParamList } from "../navigation/Stack";
 import { auth } from "../services/firebase";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootStackParamList, "HomeTabs">;
 
 export default function Home({ navigation }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,17 +29,6 @@ export default function Home({ navigation }: Props) {
   const { loggedInUser } = useAuth();
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [selectedChild, setSelectedChild] = useState(null);
-
-  const handleLogOut = async () => {
-    try {
-      setIsLoading(true);
-      await auth.signOut();
-    } catch (error) {
-      Alert.alert("Erreur", error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     const fetchChildren = async () => {
@@ -84,8 +74,8 @@ export default function Home({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView edges={["right", "bottom", "left"]}>
-      <View className="w-full h-full">
+    <SafeAreaView>
+      <KeyboardAwareScrollView className="w-full h-full">
         <View className="flex justify-center mx-4">
           {children.map((child, index) => (
             <Card key={index} className="mt-4">
@@ -130,7 +120,6 @@ export default function Home({ navigation }: Props) {
             Ajouter un enfant
           </Button>
         </View>
-        <Button onPress={handleLogOut}>Me déconnecter</Button>
         <Portal>
           <Dialog
             visible={showDeleteConfirmation}
@@ -153,7 +142,7 @@ export default function Home({ navigation }: Props) {
             </Dialog.Actions>
           </Dialog>
         </Portal>
-      </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -173,7 +162,7 @@ const ActionMenu = ({ child, navigation, handleDeleteConfirmation }) => {
           navigation.navigate("EditChild", { childId: child.id });
           setVisible(false);
         }}
-        title="Edit"
+        title="Éditer"
         leadingIcon="pencil"
       />
       <Menu.Item
@@ -181,7 +170,7 @@ const ActionMenu = ({ child, navigation, handleDeleteConfirmation }) => {
           handleDeleteConfirmation(child.id);
           setVisible(false);
         }}
-        title="Delete"
+        title="Supprimer"
         leadingIcon="delete"
       />
     </Menu>

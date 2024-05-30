@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 
 import { collection, getDocs, limit, query } from "firebase/firestore";
 import { Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { db } from "../services/firebase";
 
@@ -23,10 +24,17 @@ export default function Sentence() {
   }, []);
 
   return (
-    <View className="bg-white w-full h-full flex justify-around">
-      <View className="flex justify-center mx-4">
-        <Text variant="displayMedium">{sentence}</Text>
-      </View>
-    </View>
+    <SafeAreaView>
+      <ScrollView
+        className="w-full h-full"
+        contentContainerStyle={{ justifyContent: "space-around", flexGrow: 1 }}
+      >
+        <View className="flex justify-center mx-4">
+          <Text variant="displayMedium" className="italic text-center">
+            "{sentence}"
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

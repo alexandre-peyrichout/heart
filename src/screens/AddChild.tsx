@@ -4,6 +4,7 @@ import { Alert, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, SegmentedButtons, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
 import uuid from "react-native-uuid";
@@ -38,10 +39,6 @@ export default function AddChild({ navigation }: Props) {
     return await getDownloadURL(result.ref);
   };
 
-  const handleNameChange = (text: string) => {
-    setName(text);
-  };
-
   const handleSubmit = async () => {
     if (!name || !birthDate || !gender)
       Alert.alert("Erreur", "Veuillez remplir tous les champs.");
@@ -64,7 +61,7 @@ export default function AddChild({ navigation }: Props) {
     };
 
     createChildDocument();
-    navigation.navigate("Home");
+    navigation.navigate("HomeTabs");
   };
 
   useEffect(() => {
@@ -73,7 +70,7 @@ export default function AddChild({ navigation }: Props) {
   }, [avatar]);
 
   return (
-    <View className="w-full h-full">
+    <KeyboardAwareScrollView className="w-full h-full">
       <AvatarPicker
         image={image}
         avatar={avatar}
@@ -105,7 +102,7 @@ export default function AddChild({ navigation }: Props) {
           label="Prénom"
           placeholderTextColor={"gray"}
           value={name}
-          onChangeText={handleNameChange}
+          onChangeText={setName}
         />
         <View className="h-24">
           <DatePickerInput
@@ -122,6 +119,6 @@ export default function AddChild({ navigation }: Props) {
           Ajouter mon enfant
         </Button>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }

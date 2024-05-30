@@ -58,7 +58,7 @@ export default function StackNavigator() {
           <Stack.Screen
             name="Sentence"
             component={Sentence}
-            options={{ title: "Ma phrase" }}
+            options={{ title: "" }}
           />
           <Stack.Screen
             name="AddChild"

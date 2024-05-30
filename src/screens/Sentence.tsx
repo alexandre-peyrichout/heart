@@ -3,8 +3,8 @@ import { Alert, ScrollView, View } from "react-native";
 
 import { collection, getDocs, limit, query } from "firebase/firestore";
 import { Text } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 
+import AnimationLoveLetter from "../components/AnimationLoveLetter";
 import { db } from "../services/firebase";
 
 export default function Sentence() {
@@ -24,17 +24,18 @@ export default function Sentence() {
   }, []);
 
   return (
-    <SafeAreaView>
-      <ScrollView
-        className="w-full h-full"
-        contentContainerStyle={{ justifyContent: "space-around", flexGrow: 1 }}
-      >
-        <View className="flex justify-center mx-4">
+    <ScrollView
+      className="w-full h-full"
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <View className="absolute w-full h-full">
+        <View className="flex flex-grow justify-center items-center mx-4">
           <Text variant="displayMedium" className="italic text-center">
             "{sentence}"
           </Text>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+      <AnimationLoveLetter />
+    </ScrollView>
   );
 }

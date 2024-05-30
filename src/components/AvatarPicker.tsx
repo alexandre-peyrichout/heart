@@ -100,7 +100,7 @@ export default function AvatarPicker({
         <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)}>
           <TouchableOpacity
             onPress={() => setModalVisible(false)}
-            className="flex justify-center items-center h-full bg-black/50"
+            className="flex justify-center items-center h-full"
           >
             <View className="flex-row flex-wrap bg-white rounded-2xl m-10 justify-center pt-2 pb-2">
               {AVATARS.map((avatarObj) => (
